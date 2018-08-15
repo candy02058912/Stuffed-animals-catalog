@@ -8,8 +8,15 @@
     <label>PhotoUrl
         <input type="text" name="picture" value="{{animal.picture}}">
     </label>
+    <label>Category
+        <select name="category" value="{{animal.category.name}}">
+            {% for category in categories %}
+            <option value="{{category.name}}" {% if category.name == animal.category.name %} selected {% endif %}>{{category.name}}</option>
+            {% endfor %}
+        </select>
+    </label>
     <label for="description">Description</label>
     <textarea name="description" cols="30" rows="10">{{animal.description}}</textarea>
-    <button type="submit">Add Stuffed Animal</button>
+    <button type="submit">Edit</button>
 </form>
 {% endblock %}

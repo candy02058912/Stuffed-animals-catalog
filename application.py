@@ -40,9 +40,22 @@ def showAnimal(animal_type, animal_name):
     return render_template('animal.html', categories=categories, animal=animal)
 
 
-@app.route('/catalog/<string:animal_name>/edit/')
+@app.route('/catalog/<string:animal_name>/edit/', methods=['GET', 'POST'])
 def editAnimal(animal_name):
+
     animal = session.query(CategoryItem).filter_by(name=animal_name).one()
+    if request.method == 'POST':
+        if request.form['name']:
+            animal.name = request.form['name']
+        if request.form['picture']:
+            animal.picture = request.form['picture']
+        if request.form['description']:
+            animal.description = request.form['description']
+        if request.form['category']:
+            animal.category = session.query(Category).filter_by(name=request.form['category']).one()
+        session.add(animal)
+        session.commit()
+        return redirect(url_for('showCategoryItems', animal_type=request.form['category']))
     return render_template('edit_animal.html', categories=categories, animal=animal)
 
 
