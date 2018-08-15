@@ -1,4 +1,15 @@
 {% extends "main.html" %}
 {% block content %}
 <h2>Edit Animal</h2>
+<form action="#" method="post">
+    <label>Name
+        <input type="text" name="name" value="{{animal.name}}">
+    </label>
+    <label>PhotoUrl
+        <input type="text" name="picture" value="{{animal.picture}}">
+    </label>
+    <label for="description">Description</label>
+    <textarea name="description" cols="30" rows="10">{{animal.description}}</textarea>
+    <button type="submit">Add Stuffed Animal</button>
+</form>
 {% endblock %}

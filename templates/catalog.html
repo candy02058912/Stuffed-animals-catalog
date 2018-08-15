@@ -3,7 +3,7 @@
 <h2>Latest Additions</h2>
     <ul>
         {% for animal in animals %}
-        <li><a href="#">{{animal.name}} ({{animal.category.name}})</a></li>
+        <li><a href="{{url_for('showAnimal', animal_type=animal.category.name, animal_name=animal.name)}}">{{animal.name}} ({{animal.category.name}})</a></li>
         {% endfor %}
     </ul>
 {% endblock %}

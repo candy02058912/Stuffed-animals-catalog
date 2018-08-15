@@ -34,19 +34,20 @@ def showCategoryItems(animal_type):
     return render_template('category_items.html', categories=categories, animal_type=animal_type, animals=animals)
 
 
-@app.route('/catalog/<string:animal_type>/<string:animal>/')
-def showAnimal(animal_type, animal):
-    animal = session.query(CategoryItem).filter_by(name=animal).one()
+@app.route('/catalog/<string:animal_type>/<string:animal_name>/')
+def showAnimal(animal_type, animal_name):
+    animal = session.query(CategoryItem).filter_by(name=animal_name).one()
     return render_template('animal.html', categories=categories, animal=animal)
 
 
-@app.route('/catalog/<string:animal>/edit/')
-def editAnimal(animal):
-    return render_template('edit_animal.html', categories=categories)
+@app.route('/catalog/<string:animal_name>/edit/')
+def editAnimal(animal_name):
+    animal = session.query(CategoryItem).filter_by(name=animal_name).one()
+    return render_template('edit_animal.html', categories=categories, animal=animal)
 
 
-@app.route('/catalog/<string:animal>/delete/')
-def deleteAnimal(animal):
+@app.route('/catalog/<string:animal_name>/delete/')
+def deleteAnimal(animal_name):
     return render_template('delete_animal.html', categories=categories)
 
 
