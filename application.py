@@ -7,7 +7,9 @@ from database_setup import Category, Base, CategoryItem, User
 
 app = Flask(__name__)
 
-engine = create_engine('sqlite:///stuffedanimals.db', connect_args={'check_same_thread': False})
+engine = create_engine(
+    'sqlite:///stuffedanimals.db', connect_args={'check_same_thread': False}
+)
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
@@ -31,7 +33,12 @@ def showCatalog():
 def showCategoryItems(animal_type):
     category_id = session.query(Category).filter_by(name=animal_type).one().id
     animals = session.query(CategoryItem).filter_by(category_id=category_id)
-    return render_template('category_items.html', categories=categories, animal_type=animal_type, animals=animals)
+    return render_template(
+        'category_items.html',
+        categories=categories,
+        animal_type=animal_type,
+        animals=animals
+    )
 
 
 @app.route('/catalog/<string:animal_type>/<string:animal_name>/')
@@ -51,11 +58,18 @@ def editAnimal(animal_name):
         if request.form['description']:
             animal.description = request.form['description']
         if request.form['category']:
-            animal.category = session.query(Category).filter_by(name=request.form['category']).one()
+            animal.category = session.query(Category).filter_by(
+                name=request.form['category']).one()
         session.add(animal)
         session.commit()
-        return redirect(url_for('showCategoryItems', animal_type=request.form['category']))
-    return render_template('edit_animal.html', categories=categories, animal=animal)
+        return redirect(
+            url_for('showCategoryItems', animal_type=request.form['category'])
+        )
+    return render_template(
+        'edit_animal.html',
+        categories=categories,
+        animal=animal
+    )
 
 
 @app.route('/catalog/<string:animal_name>/delete/', methods=['GET', 'POST'])
@@ -64,8 +78,14 @@ def deleteAnimal(animal_name):
         animal = session.query(CategoryItem).filter_by(name=animal_name).one()
         session.delete(animal)
         session.commit()
-        return redirect(url_for('showCategoryItems', animal_type=animal.category.name))
-    return render_template('delete_animal.html', categories=categories, animal_name=animal_name)
+        return redirect(
+            url_for('showCategoryItems', animal_type=animal.category.name)
+        )
+    return render_template(
+        'delete_animal.html',
+        categories=categories,
+        animal_name=animal_name
+    )
 
 
 @app.route('/catalog/new/', methods=['GET', 'POST'])
@@ -75,7 +95,8 @@ def addAnimal():
             name=request.form['name'],
             picture=request.form['picture'],
             description=request.form['description'],
-            category=session.query(Category).filter_by(name=request.form['category']).one()
+            category=session.query(Category).filter_by(
+                name=request.form['category']).one()
         )
         session.add(animal)
         session.commit()

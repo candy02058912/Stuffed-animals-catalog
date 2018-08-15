@@ -22,8 +22,13 @@ category1 = Category(name="Bear")
 session.add(category1)
 session.commit()
 
-animal1 = CategoryItem(user_id=1, name="Winnie the Pooh", description="A bear with a very little brain.",
-                     picture="https://i.imgur.com/8y1Ugtn.jpg", category=category1)
+animal1 = CategoryItem(
+    user_id=1,
+    name="Winnie the Pooh",
+    description="A bear with a very little brain.",
+    picture="https://i.imgur.com/8y1Ugtn.jpg",
+    category=category1
+)
 
 session.add(animal1)
 session.commit()
@@ -34,8 +39,13 @@ category2 = Category(name="Pig")
 session.add(category2)
 session.commit()
 
-animal1 = CategoryItem(user_id=1, name="Piglet", description="Winnie the Pooh's best friend.",
-                     picture="https://i.imgur.com/QPz4qOm.jpg", category=category2)
+animal1 = CategoryItem(
+    user_id=1,
+    name="Piglet",
+    description="Winnie the Pooh's best friend.",
+    picture="https://i.imgur.com/QPz4qOm.jpg",
+    category=category2
+)
 
 session.add(animal1)
 session.commit()
@@ -46,8 +56,13 @@ category3 = Category(name="Mouse")
 session.add(category3)
 session.commit()
 
-animal1 = CategoryItem(user_id=1, name="Pikachu", description="A friendly electric mouse from Pokemon.",
-                     picture="https://i.imgur.com/acdAGy4.jpg", category=category3)
+animal1 = CategoryItem(
+    user_id=1,
+    name="Pikachu",
+    description="A friendly electric mouse from Pokemon.",
+    picture="https://i.imgur.com/acdAGy4.jpg",
+    category=category3
+)
 
 session.add(animal1)
 session.commit()
