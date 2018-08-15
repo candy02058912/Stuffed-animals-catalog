@@ -1,0 +1,43 @@
+{% extends "main.html" %}
+{% block content %}
+<h2>Login</h2>
+<!--LOAD PRE-REQUISITES FOR GOOGLE SIGN IN -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script src="//apis.google.com/js/platform.js?onload=start"> </script>
+<!-- END PRE-REQUISITES FOR GOOGLE SIGN IN -->
+<div id="signinButton">
+    <span class="g-signin"
+        data-scope="openid email"
+        data-clientid="357765276324-63pfj9nb6vp8gqkfle47kgr2v44onf4m.apps.googleusercontent.com"
+        data-redirecturi="postmessage"
+        data-accesstype="offline"
+        data-cookiepolicy="single_host_origin"
+        data-callback="signInCallback"
+        data-approvalprompt="force">
+    </span>
+</div>
+<div id="result"></div>
+<script>
+    function signInCallback(authResult) {
+        console.log('authResult', authResult);
+        $('#signinButton').attr('style', 'display: none');
+        $.ajax({
+            type: 'POST',
+            url: '/gconnect?state={{state}}',
+            processData: false,
+            contentType: 'application/octet-stream; charset=utf-8',
+            data: authResult['code'],
+            success: function(result) {
+                console.log('result', result);
+                if (result) {
+                    window.location.href = '/';
+                } else if (authResult['error']) {
+                    console.log('Error:', authResult['error'])
+                } else {
+                    $('#result').html('Failed to make a server side call!')
+                }
+            }
+        })
+    }
+</script>
+{% endblock %}

@@ -2,8 +2,8 @@
     <h2>Category</h2>
     <ul>
         {% for category in categories %}
-        <li><a href="{{url_for('showCategoryItems', animal_type=category.name)}}">{{category.name}}</a></li>
+        <li><a href="{{url_for('show_category_items', animal_type=category.name)}}">{{category.name}}</a></li>
         {% endfor %}
     </ul>
-    <a href="{{url_for('addAnimal')}}" class="button">Add Animal</a>
+    <a href="{{url_for('add_animal')}}" class="button">Add Animal</a>
 </nav>

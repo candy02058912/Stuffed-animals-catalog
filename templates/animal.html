@@ -1,7 +1,7 @@
 {% extends "main.html" %}
 {% block content %}
 <h2>{{animal.name}}</h2>
-<p><a href="{{url_for('editAnimal', animal_name=animal.name)}}">Edit</a> | <a href="{{url_for('deleteAnimal', animal_name=animal.name)}}">Delete</a></p>
+<p><a href="{{url_for('edit_animal', animal_name=animal.name)}}">Edit</a> | <a href="{{url_for('delete_animal', animal_name=animal.name)}}">Delete</a></p>
 <p>{{animal.description}}</p>
 {% if animal.picture %}
 <img src="{{animal.picture}}" alt="{{animal.name}}">
