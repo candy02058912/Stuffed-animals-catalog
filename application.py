@@ -42,7 +42,6 @@ def showAnimal(animal_type, animal_name):
 
 @app.route('/catalog/<string:animal_name>/edit/', methods=['GET', 'POST'])
 def editAnimal(animal_name):
-
     animal = session.query(CategoryItem).filter_by(name=animal_name).one()
     if request.method == 'POST':
         if request.form['name']:
@@ -59,13 +58,28 @@ def editAnimal(animal_name):
     return render_template('edit_animal.html', categories=categories, animal=animal)
 
 
-@app.route('/catalog/<string:animal_name>/delete/')
+@app.route('/catalog/<string:animal_name>/delete/', methods=['GET', 'POST'])
 def deleteAnimal(animal_name):
-    return render_template('delete_animal.html', categories=categories)
+    if request.method == 'POST':
+        animal = session.query(CategoryItem).filter_by(name=animal_name).one()
+        session.delete(animal)
+        session.commit()
+        return redirect(url_for('showCategoryItems', animal_type=animal.category.name))
+    return render_template('delete_animal.html', categories=categories, animal_name=animal_name)
 
 
-@app.route('/catalog/new/')
+@app.route('/catalog/new/', methods=['GET', 'POST'])
 def addAnimal():
+    if request.method == 'POST':
+        animal = CategoryItem(
+            name=request.form['name'],
+            picture=request.form['picture'],
+            description=request.form['description'],
+            category=session.query(Category).filter_by(name=request.form['category']).one()
+        )
+        session.add(animal)
+        session.commit()
+        return redirect(url_for('showCatalog'))
     return render_template('add_animal.html', categories=categories)
 
 

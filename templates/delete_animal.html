@@ -1,4 +1,7 @@
 {% extends "main.html" %}
 {% block content %}
-<h2>Delete Animal</h2>
+<h2>Are you sure you want to delete {{animal}}?</h2>
+<form action="#" method="post">
+    <button type="submit">Delete</button>
+</form>
 {% endblock %}

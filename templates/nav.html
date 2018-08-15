@@ -5,4 +5,5 @@
         <li><a href="{{url_for('showCategoryItems', animal_type=category.name)}}">{{category.name}}</a></li>
         {% endfor %}
     </ul>
+    <a href="{{url_for('addAnimal')}}" class="button">Add Animal</a>
 </nav>

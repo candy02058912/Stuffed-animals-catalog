@@ -8,6 +8,13 @@
     <label>PhotoUrl
         <input type="text" name="picture">
     </label>
+    <label>Category
+        <select name="category">
+            {% for category in categories %}
+            <option value="{{category.name}}">{{category.name}}</option>
+            {% endfor %}
+        </select>
+    </label>
     <label for="description">Description</label>
     <textarea name="description" cols="30" rows="10"></textarea>
     <button type="submit">Add Stuffed Animal</button>
