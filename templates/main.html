@@ -5,9 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Candy's Stuffed Animals Catalog</title>
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+    <link rel="stylesheet" href="//cdn.rawgit.com/necolas/normalize.css/master/normalize.css">
+    <link rel="stylesheet" href="//cdn.rawgit.com/milligram/milligram/master/dist/milligram.min.css">
+    <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
 </head>
 <body>
-    {% block content %}
-    {% endblock %}
+    {% include "header.html" %}
+    <div class="container flex padding-top layout">
+        {% include "nav.html" %}
+        <div class="content">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
 </body>
 </html>

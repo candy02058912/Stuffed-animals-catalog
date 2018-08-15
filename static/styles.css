@@ -1,0 +1,46 @@
+.header {
+    position: fixed;
+    left: 0;
+    right: 0;
+    background: #f4f5f6;
+    border-bottom: .1rem solid #d1d1d1;
+    height: 70px;
+}
+
+.header > section {
+    height: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.header-title {
+    font-size: 2rem;
+    margin: 0;
+}
+
+.header-button {
+    margin: 0;
+}
+
+.padding-top {
+    padding-top: 100px;
+}
+
+.flex {
+    display: flex;
+}
+
+nav {
+    flex: 1;
+    border-right: .2rem solid #d1d1d1;
+}
+
+.content {
+    flex: 4;
+    margin-left: 2rem;
+}
+
+.layout {
+    min-height: 500px;
+}
