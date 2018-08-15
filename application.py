@@ -7,32 +7,31 @@ app = Flask(__name__)
 @app.route('/')
 @app.route('/catalog/')
 def showCatalog():
-    return 'Catalog'
+    return render_template('catalog.html')
 
 
 @app.route('/catalog/<string:animal_type>/items/')
 def showCategoryItems(animal_type):
-    return 'Show category items'
+    return render_template('category_items.html')
 
 
 @app.route('/catalog/<string:animal_type>/<string:animal>/')
 def showAnimal(animal_type, animal):
-    print animal_type, animal
-    return 'pooh'
+    return render_template('animal.html')
 
 @app.route('/catalog/<string:animal>/edit/')
 def editAnimal(animal):
-    return 'edit pooh'
+    return render_template('edit_animal.html')
 
 
 @app.route('/catalog/<string:animal>/delete/')
 def deleteAnimal(animal):
-    return 'delete pooh'
+    return render_template('delete_animal.html')
 
 
 @app.route('/catalog/new/')
 def addAnimal():
-    return 'add animal'
+    return render_template('add_animal.html')
 
 
 if __name__ == '__main__':
