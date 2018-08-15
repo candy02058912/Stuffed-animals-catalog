@@ -1,6 +1,19 @@
 <header class="header">
     <section class="container">
         <h1 class="header-title"><a href="/">Stuffed Animals Catalog</a></h1>
+        {% if 'username' not in session %}
         <a href="{{url_for('login')}}" class="button header-button">Login</a>
+        {% else %}
+        <a href="{{url_for('gdisconnect')}}" class="button header-button">Logout</a>
+        {% endif %}
     </section>
 </header>
+<section class="padding-top">
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for message in messages %}
+            <h6 class="notification">{{message}}</h6>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+</section>

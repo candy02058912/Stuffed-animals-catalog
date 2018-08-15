@@ -25,7 +25,7 @@
 }
 
 .padding-top {
-    padding-top: 100px;
+    padding-top: 70px;
 }
 
 .flex {
@@ -44,4 +44,12 @@ nav {
 
 .layout {
     min-height: 500px;
+    padding-top: 30px;
+}
+
+.notification {
+    background-color: #9b4dca;
+    text-align: center;
+    color: white;
+    padding: 1rem;
 }

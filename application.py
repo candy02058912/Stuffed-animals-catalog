@@ -57,6 +57,9 @@ def show_category_items(animal_type):
 def show_animal(animal_type, animal_name):
     """Show the individual animal"""
     animal = session.query(CategoryItem).filter_by(name=animal_name).one()
+    creator = get_user_info(animal.user_id)
+    if 'username' not in login_session or creator.id != login_session['user_id']:
+        return render_template('animal.html', categories=categories, animal=animal, public=True)
     return render_template('animal.html', categories=categories, animal=animal)
 
 
@@ -64,6 +67,9 @@ def show_animal(animal_type, animal_name):
 def edit_animal(animal_name):
     """Edit a particular animal"""
     animal = session.query(CategoryItem).filter_by(name=animal_name).one()
+    creator = get_user_info(animal.user_id)
+    if 'username' not in login_session or creator.id != login_session['user_id']:
+        return redirect('/login')
     if request.method == 'POST':
         if request.form['name']:
             animal.name = request.form['name']
@@ -76,6 +82,7 @@ def edit_animal(animal_name):
                 name=request.form['category']).one()
         session.add(animal)
         session.commit()
+        flash("Edited!")
         return redirect(url_for(
             'show_category_items', animal_type=request.form['category']
         ))
@@ -89,10 +96,14 @@ def edit_animal(animal_name):
 @app.route('/catalog/<string:animal_name>/delete/', methods=['GET', 'POST'])
 def delete_animal(animal_name):
     """Delete a particular animal"""
+    creator = get_user_info(animal.user_id)
+    if 'username' not in login_session or creator.id != login_session['user_id']:
+        return redirect('/login')
     if request.method == 'POST':
         animal = session.query(CategoryItem).filter_by(name=animal_name).one()
         session.delete(animal)
         session.commit()
+        flash("Deleted %s from %s!" % (animal.name, animal.category.name))
         return redirect(
             url_for('show_category_items', animal_type=animal.category.name)
         )
@@ -106,16 +117,20 @@ def delete_animal(animal_name):
 @app.route('/catalog/new/', methods=['GET', 'POST'])
 def add_animal():
     """Add an animal"""
+    if 'username' not in login_session:
+        return redirect('/login')
     if request.method == 'POST':
         animal = CategoryItem(
             name=request.form['name'],
             picture=request.form['picture'],
             description=request.form['description'],
+            user_id=login_session['user_id'],
             category=session.query(Category).filter_by(
                 name=request.form['category']).one()
         )
         session.add(animal)
         session.commit()
+        flash("Added %s to %s!" % (request.form['name'], request.form['category']))
         return redirect(url_for('show_catalog'))
     return render_template('add_animal.html', categories=categories)
 
@@ -207,7 +222,8 @@ def gconnect():
     if not user_id:
         user_id = create_user(login_session)
     login_session['user_id'] = user_id
-    return
+    flash('Hello %s!' % (login_session['username']))
+    return 'Logged In'
 
 
 @app.route('/gdisconnect')
@@ -234,12 +250,11 @@ def gdisconnect():
         del login_session['username']
         del login_session['email']
         del login_session['picture']
-        response = make_response(json.dumps('Successfully disconnected.'), 200)
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        flash("Logged out successfully!")
+        return redirect('/')
     else:
         response = make_response(
-            json.dumps('Failed to revoke token for given user.', 400))
+            json.dumps("Failed to revoke token for given user.", 400))
         response.headers['Content-Type'] = 'application/json'
         return response
 

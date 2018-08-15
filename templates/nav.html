@@ -5,5 +5,7 @@
         <li><a href="{{url_for('show_category_items', animal_type=category.name)}}">{{category.name}}</a></li>
         {% endfor %}
     </ul>
+    {% if 'username' in session %}
     <a href="{{url_for('add_animal')}}" class="button">Add Animal</a>
+    {% endif %}
 </nav>
