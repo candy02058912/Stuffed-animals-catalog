@@ -1,4 +1,8 @@
 {% extends "main.html" %}
 {% block content %}
-<h2>Show Animal</h2>
+<h2>{{animal.name}}</h2>
+<p>{{animal.description}}</p>
+{% if animal.picture %}
+<img src="{{animal.picture}}" alt="{{animal.name}}">
+{% endif %}
 {% endblock %}

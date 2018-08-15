@@ -36,7 +36,8 @@ def showCategoryItems(animal_type):
 
 @app.route('/catalog/<string:animal_type>/<string:animal>/')
 def showAnimal(animal_type, animal):
-    return render_template('animal.html', categories=categories)
+    animal = session.query(CategoryItem).filter_by(name=animal).one()
+    return render_template('animal.html', categories=categories, animal=animal)
 
 
 @app.route('/catalog/<string:animal>/edit/')
