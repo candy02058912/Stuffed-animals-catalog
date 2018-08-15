@@ -1,2 +1,2 @@
-# Stuffed-animals-catalog
+# Stuffed Animals Catalog
 Catalog of stuffed animals
