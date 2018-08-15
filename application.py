@@ -1,37 +1,55 @@
 #!/usr/bin/python python2.7
-from flask import Flask, render_template, request, redirect,jsonify, url_for, flash
+from flask import (Flask, render_template, request, redirect,
+                   jsonify, url_for, flash)
+from sqlalchemy import create_engine, asc
+from sqlalchemy.orm import sessionmaker
+from database_setup import Category, Base, CategoryItem, User
 
 app = Flask(__name__)
+
+engine = create_engine('sqlite:///stuffedanimals.db', connect_args={'check_same_thread': False})
+Base.metadata.bind = engine
+DBSession = sessionmaker(bind=engine)
+session = DBSession()
+
+# every page has categories
+categories = session.query(Category).all()
 
 
 @app.route('/')
 @app.route('/catalog/')
 def showCatalog():
-    return render_template('catalog.html')
+    animals = session.query(CategoryItem).order_by(CategoryItem.id.desc())
+    return render_template(
+        'catalog.html',
+        categories=categories,
+        animals=animals
+    )
 
 
 @app.route('/catalog/<string:animal_type>/items/')
 def showCategoryItems(animal_type):
-    return render_template('category_items.html')
+    return render_template('category_items.html', categories=categories)
 
 
 @app.route('/catalog/<string:animal_type>/<string:animal>/')
 def showAnimal(animal_type, animal):
-    return render_template('animal.html')
+    return render_template('animal.html', categories=categories)
+
 
 @app.route('/catalog/<string:animal>/edit/')
 def editAnimal(animal):
-    return render_template('edit_animal.html')
+    return render_template('edit_animal.html', categories=categories)
 
 
 @app.route('/catalog/<string:animal>/delete/')
 def deleteAnimal(animal):
-    return render_template('delete_animal.html')
+    return render_template('delete_animal.html', categories=categories)
 
 
 @app.route('/catalog/new/')
 def addAnimal():
-    return render_template('add_animal.html')
+    return render_template('add_animal.html', categories=categories)
 
 
 if __name__ == '__main__':

@@ -1,4 +1,9 @@
 {% extends "main.html" %}
 {% block content %}
-<h2>Catalog</h2>
+<h2>Latest Additions</h2>
+    <ul>
+        {% for animal in animals %}
+        <li><a href="#">{{animal.name}} ({{animal.category.name}})</a></li>
+        {% endfor %}
+    </ul>
 {% endblock %}

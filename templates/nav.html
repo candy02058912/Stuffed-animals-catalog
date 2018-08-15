@@ -1,6 +1,8 @@
 <nav>
     <h2>Category</h2>
     <ul>
-        <li>XXX</li>
+        {% for category in categories %}
+        <li><a href="{{url_for('showCategoryItems', animal_type=category.name)}}">{{category.name}}</a></li>
+        {% endfor %}
     </ul>
 </nav>
