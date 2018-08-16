@@ -57,7 +57,8 @@ def show_category_items(animal_type):
 @app.route('/catalog/<string:animal_type>/<string:animal_name>/')
 def show_animal(animal_type, animal_name):
     """Show the individual animal"""
-    animal = session.query(CategoryItem).filter_by(name=animal_name).one()
+    category = session.query(Category).filter_by(name=animal_type).one()
+    animal = session.query(CategoryItem).filter_by(name=animal_name, category_id=category.id).one()
     creator = get_user_info(animal.user_id)
     if 'username' not in login_session or \
             creator.id != login_session['user_id']:
@@ -263,11 +264,28 @@ def gdisconnect():
         return response
 
 
-@app.route('/api/catalog')
+@app.route('/api/catalog/')
 def catalog_api():
     """Returns the whole catalog in JSON format"""
     animals = session.query(CategoryItem).all()
     return jsonify(animals=[animal.serialize for animal in animals])
+
+
+@app.route('/api/catalog/<string:animal_type>/')
+def catalog_by_category_api(animal_type):
+    """Returns the animals by category in JSON format"""
+    category = session.query(Category).filter_by(name=animal_type).one()
+    animals = session.query(CategoryItem).filter_by(category=category)
+    return jsonify(animals=[animal.serialize for animal in animals])
+
+
+@app.route('/api/catalog/<string:animal_type>/<string:animal_name>')
+def animal_api(animal_type, animal_name):
+    """Returns individual animal in JSON format"""
+    category = session.query(Category).filter_by(name=animal_type).one()
+    animal = session.query(CategoryItem).filter_by(name=animal_name, category_id=category.id).one()
+    return jsonify(animal.serialize)
+
 
 # Util functions
 def create_user(login_session):
