@@ -1,7 +1,7 @@
 # Stuffed Animals Catalog
 Catalog of stuffed animals
 
-## Screenshot
+## Screenshots
 ![Catalog Page](https://i.imgur.com/UbhmvNg.png)
 ![Pikachu](https://i.imgur.com/pvMxWOG.jpg)
 
