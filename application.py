@@ -58,7 +58,8 @@ def show_category_items(animal_type):
 def show_animal(animal_type, animal_name):
     """Show the individual animal"""
     category = session.query(Category).filter_by(name=animal_type).one()
-    animal = session.query(CategoryItem).filter_by(name=animal_name, category_id=category.id).one()
+    animal = session.query(CategoryItem).filter_by(
+        name=animal_name, category_id=category.id).one()
     creator = get_user_info(animal.user_id)
     if 'username' not in login_session or \
             creator.id != login_session['user_id']:
@@ -283,7 +284,8 @@ def catalog_by_category_api(animal_type):
 def animal_api(animal_type, animal_name):
     """Returns individual animal in JSON format"""
     category = session.query(Category).filter_by(name=animal_type).one()
-    animal = session.query(CategoryItem).filter_by(name=animal_name, category_id=category.id).one()
+    animal = session.query(CategoryItem).filter_by(
+        name=animal_name, category_id=category.id).one()
     return jsonify(animal.serialize)
 
 
