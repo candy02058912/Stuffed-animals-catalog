@@ -49,7 +49,7 @@ class CategoryItem(Base):
             'name': self.name,
             'description': self.description,
             'id': self.id,
-            'picture': self.price,
+            'picture': self.picture,
         }
 
 

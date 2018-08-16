@@ -263,6 +263,12 @@ def gdisconnect():
         return response
 
 
+@app.route('/api/catalog')
+def catalog_api():
+    """Returns the whole catalog in JSON format"""
+    animals = session.query(CategoryItem).all()
+    return jsonify(animals=[animal.serialize for animal in animals])
+
 # Util functions
 def create_user(login_session):
     """Create user and return user id from login session"""
