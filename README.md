@@ -43,7 +43,8 @@ python database_initialize.py
 ```
 export SECRET_KEY=secret_key_of_your_choice
 ```
-9. Run application:
+9. Unzip client_secrets.zip, password is in the `Submission Details` section on Udacity. Make sure the file is called client_secrets.json.
+10. Run application:
 ```
 python application.py
 ```
