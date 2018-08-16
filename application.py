@@ -58,8 +58,10 @@ def show_animal(animal_type, animal_name):
     """Show the individual animal"""
     animal = session.query(CategoryItem).filter_by(name=animal_name).one()
     creator = get_user_info(animal.user_id)
-    if 'username' not in login_session or creator.id != login_session['user_id']:
-        return render_template('animal.html', categories=categories, animal=animal, public=True)
+    if 'username' not in login_session or \
+            creator.id != login_session['user_id']:
+        return render_template(
+            'animal.html', categories=categories, animal=animal, public=True)
     return render_template('animal.html', categories=categories, animal=animal)
 
 
@@ -68,7 +70,8 @@ def edit_animal(animal_name):
     """Edit a particular animal"""
     animal = session.query(CategoryItem).filter_by(name=animal_name).one()
     creator = get_user_info(animal.user_id)
-    if 'username' not in login_session or creator.id != login_session['user_id']:
+    if 'username' not in login_session or\
+            creator.id != login_session['user_id']:
         return redirect('/login')
     if request.method == 'POST':
         if request.form['name']:
@@ -96,14 +99,16 @@ def edit_animal(animal_name):
 @app.route('/catalog/<string:animal_name>/delete/', methods=['GET', 'POST'])
 def delete_animal(animal_name):
     """Delete a particular animal"""
+    animal = session.query(CategoryItem).filter_by(name=animal_name).one()
     creator = get_user_info(animal.user_id)
-    if 'username' not in login_session or creator.id != login_session['user_id']:
+    if 'username' not in login_session or\
+            creator.id != login_session['user_id']:
         return redirect('/login')
     if request.method == 'POST':
-        animal = session.query(CategoryItem).filter_by(name=animal_name).one()
         session.delete(animal)
         session.commit()
-        flash("Deleted %s from %s!" % (animal.name, animal.category.name))
+        flash("%s from %s has been deleted!" %
+              (animal.name, animal.category.name))
         return redirect(
             url_for('show_category_items', animal_type=animal.category.name)
         )
@@ -130,7 +135,8 @@ def add_animal():
         )
         session.add(animal)
         session.commit()
-        flash("Added %s to %s!" % (request.form['name'], request.form['category']))
+        flash("Added %s to %s!" %
+              (request.form['name'], request.form['category']))
         return redirect(url_for('show_catalog'))
     return render_template('add_animal.html', categories=categories)
 
