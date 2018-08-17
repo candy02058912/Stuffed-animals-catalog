@@ -77,15 +77,16 @@ def edit_animal(animal_name):
             creator.id != login_session['user_id']:
         return redirect('/login')
     if request.method == 'POST':
-        if request.form['name']:
-            animal.name = request.form['name']
-        if request.form['picture']:
-            animal.picture = request.form['picture']
-        if request.form['description']:
-            animal.description = request.form['description']
-        if request.form['category']:
-            animal.category = session.query(Category).filter_by(
-                name=request.form['category']).one_or_none()
+        if request.form['name'] == '':
+            flash("Edit failed: Name is empty")
+            return redirect(url_for(
+                'show_category_items', animal_type=request.form['category']
+            ))
+        animal.name = request.form['name']
+        animal.picture = request.form['picture']
+        animal.description = request.form['description']
+        animal.category = session.query(Category).filter_by(
+            name=request.form['category']).one_or_none()
         session.add(animal)
         session.commit()
         flash("Edited!")
@@ -128,6 +129,9 @@ def add_animal():
     if 'username' not in login_session:
         return redirect('/login')
     if request.method == 'POST':
+        if request.form['name'] == '':
+            flash("Create failed: Name is empty")
+            return redirect(url_for('show_catalog'))
         animal = CategoryItem(
             name=request.form['name'],
             picture=request.form['picture'],
