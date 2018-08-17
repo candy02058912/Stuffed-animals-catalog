@@ -18,8 +18,8 @@ from oauth2client.client import FlowExchangeError
 # Initialization
 app = Flask(__name__)
 path = os.path.dirname(os.path.abspath(__file__))
-CLIENT_ID = json.loads(
-    open(os.path.join(path, 'client_secrets.json'), 'r').read())['web']['client_id']
+CLIENT_ID = json.loads(open(
+    os.path.join(path, 'client_secrets.json'), 'r').read())['web']['client_id']
 engine = create_engine(
     'sqlite:///stuffedanimals.db', connect_args={'check_same_thread': False}
 )
@@ -35,7 +35,8 @@ categories = session.query(Category).all()
 @app.route('/catalog/')
 def show_catalog():
     """Shows the whole catalog to the public"""
-    animals = session.query(CategoryItem).order_by(CategoryItem.create_time.desc())
+    animals = session.query(CategoryItem).order_by(
+        CategoryItem.create_time.desc())
     return render_template(
         'catalog.html',
         categories=categories,
@@ -72,7 +73,8 @@ def show_animal(animal_type, animal_name):
 @app.route('/catalog/<string:animal_name>/edit/', methods=['GET', 'POST'])
 def edit_animal(animal_name):
     """Edit a particular animal"""
-    animal = session.query(CategoryItem).filter_by(name=animal_name).one_or_none()
+    animal = session.query(CategoryItem).filter_by(
+        name=animal_name).one_or_none()
     creator = get_user_info(session, animal.user_id)
     if 'username' not in login_session:
         return redirect('/login')
@@ -105,7 +107,8 @@ def edit_animal(animal_name):
 @app.route('/catalog/<string:animal_name>/delete/', methods=['GET', 'POST'])
 def delete_animal(animal_name):
     """Delete a particular animal"""
-    animal = session.query(CategoryItem).filter_by(name=animal_name).one_or_none()
+    animal = session.query(CategoryItem).filter_by(
+        name=animal_name).one_or_none()
     creator = get_user_info(session, animal.user_id)
     if 'username' not in login_session:
         return redirect('/login')
@@ -158,7 +161,8 @@ def login():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in xrange(32))
     login_session['state'] = state
-    return render_template('login.html', categories=categories, state=state, client_id=CLIENT_ID)
+    return render_template(
+        'login.html', categories=categories, state=state, client_id=CLIENT_ID)
 
 
 @app.route('/gconnect', methods=['POST'])
@@ -174,7 +178,8 @@ def gconnect():
 
     try:
         # Upgrade the authorization code into a credentials object.
-        oauth_flow = flow_from_clientsecrets(os.path.join(path, 'client_secrets.json'), scope='')
+        oauth_flow = flow_from_clientsecrets(
+            os.path.join(path, 'client_secrets.json'), scope='')
         oauth_flow.redirect_uri = 'postmessage'
         credentials = oauth_flow.step2_exchange(code)
     except FlowExchangeError:
@@ -283,7 +288,8 @@ def catalog_api():
 @app.route('/api/catalog/<string:animal_type>/')
 def catalog_by_category_api(animal_type):
     """Returns the animals by category in JSON format"""
-    category = session.query(Category).filter_by(name=animal_type).one_or_none()
+    category = session.query(Category).filter_by(
+        name=animal_type).one_or_none()
     animals = session.query(CategoryItem).filter_by(category=category)
     return jsonify(animals=[animal.serialize for animal in animals])
 

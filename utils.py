@@ -1,5 +1,6 @@
 from database_setup import Category, CategoryItem, User
 
+
 def create_user(session, login_session):
     """Create user and return user id from login session"""
     new_user = User(
@@ -9,7 +10,8 @@ def create_user(session, login_session):
     )
     session.add(new_user)
     session.commit()
-    user = session.query(User).filter_by(email=login_session['email']).one_or_none()
+    user = session.query(User).filter_by(
+        email=login_session['email']).one_or_none()
     return user.id
 
 
