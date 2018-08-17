@@ -11,6 +11,7 @@ from flask import session as login_session
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
 from database_setup import Category, Base, CategoryItem, User
+from utils import create_user, get_user_info, get_user_id
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 
@@ -45,8 +46,7 @@ def show_catalog():
 @app.route('/catalog/<string:animal_type>/items/')
 def show_category_items(animal_type):
     """Shows item by category to the public"""
-    category_id = session.query(Category).filter_by(name=animal_type).one_or_none().id
-    animals = session.query(CategoryItem).filter_by(category_id=category_id)
+    animals = session.query(CategoryItem).filter_by(category_name=animal_type)
     return render_template(
         'category_items.html',
         categories=categories,
@@ -59,8 +59,9 @@ def show_category_items(animal_type):
 def show_animal(animal_type, animal_name):
     """Show the individual animal"""
     animal = session.query(CategoryItem).filter_by(
-        name=animal_name, category_id=animal_type).one_or_none()
-    creator = get_user_info(animal.user_id)
+        name=animal_name, category_name=animal_type).one()
+    creator = get_user_info(session, animal.user_id)
+    print creator
     if 'username' not in login_session or \
             creator.id != login_session['user_id']:
         return render_template(
@@ -72,7 +73,7 @@ def show_animal(animal_type, animal_name):
 def edit_animal(animal_name):
     """Edit a particular animal"""
     animal = session.query(CategoryItem).filter_by(name=animal_name).one_or_none()
-    creator = get_user_info(animal.user_id)
+    creator = get_user_info(session, animal.user_id)
     if 'username' not in login_session or\
             creator.id != login_session['user_id']:
         return redirect('/login')
@@ -104,7 +105,7 @@ def edit_animal(animal_name):
 def delete_animal(animal_name):
     """Delete a particular animal"""
     animal = session.query(CategoryItem).filter_by(name=animal_name).one_or_none()
-    creator = get_user_info(animal.user_id)
+    creator = get_user_info(session, animal.user_id)
     if 'username' not in login_session or\
             creator.id != login_session['user_id']:
         return redirect('/login')
@@ -233,9 +234,9 @@ def gconnect():
     login_session['email'] = data['email']
 
     # If user does not exist, create a new row in db.
-    user_id = get_user_id(login_session['email'])
+    user_id = get_user_id(session, login_session['email'])
     if not user_id:
-        user_id = create_user(login_session)
+        user_id = create_user(session, login_session)
     login_session['user_id'] = user_id
     flash('Hello %s!' % (login_session['username']))
     return 'Logged In'
@@ -290,35 +291,6 @@ def animal_api(animal_type, animal_name):
     animal = session.query(CategoryItem).filter_by(
         name=animal_name, category_name=animal_type).one_or_none()
     return jsonify(animal.serialize)
-
-
-# Util functions
-def create_user(login_session):
-    """Create user and return user id from login session"""
-    new_user = User(
-        name=login_session['username'],
-        email=login_session['email'],
-        picture=login_session['picture']
-    )
-    session.add(new_user)
-    session.commit()
-    user = session.query(User).filter_by(email=login_session['email']).one_or_none()
-    return user.id
-
-
-def get_user_info(user_id):
-    """Returns user by user id"""
-    user = session.query(User).filter_by(id=user_id).one_or_none()
-    return user
-
-
-def get_user_id(email):
-    """Returns user id by email"""
-    try:
-        user = session.query(User).filter_by(email=email).one_or_none()
-        return user.id
-    except Exception:
-        return None
 
 
 if __name__ == '__main__':
