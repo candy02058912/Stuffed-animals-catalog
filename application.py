@@ -74,9 +74,10 @@ def edit_animal(animal_name):
     """Edit a particular animal"""
     animal = session.query(CategoryItem).filter_by(name=animal_name).one_or_none()
     creator = get_user_info(session, animal.user_id)
-    if 'username' not in login_session or\
-            creator.id != login_session['user_id']:
+    if 'username' not in login_session:
         return redirect('/login')
+    if creator.id != login_session['user_id']:
+        return render_template('unauthorized.html', categories=categories)
     if request.method == 'POST':
         if request.form['name'] == '':
             flash("Edit failed: Name is empty")
@@ -106,9 +107,10 @@ def delete_animal(animal_name):
     """Delete a particular animal"""
     animal = session.query(CategoryItem).filter_by(name=animal_name).one_or_none()
     creator = get_user_info(session, animal.user_id)
-    if 'username' not in login_session or\
-            creator.id != login_session['user_id']:
+    if 'username' not in login_session:
         return redirect('/login')
+    if creator.id != login_session['user_id']:
+        return render_template('unauthorized.html', categories=categories)
     if request.method == 'POST':
         session.delete(animal)
         session.commit()
