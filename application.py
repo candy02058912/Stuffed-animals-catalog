@@ -263,6 +263,7 @@ def gdisconnect():
         del login_session['username']
         del login_session['email']
         del login_session['picture']
+        del login_session['user_id']
         flash("Logged out successfully!")
         return redirect('/')
     else:
