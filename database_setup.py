@@ -1,5 +1,5 @@
 #!/usr/bin/python python2.7
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
@@ -21,15 +21,13 @@ class Category(Base):
     """Stuffed animal category"""
     __tablename__ = 'category'
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
+    name = Column(String(250), nullable=False, primary_key=True)
 
     @property
     def serialize(self):
         """Return object data in easily serializeable format"""
         return {
             'name': self.name,
-            'id': self.id,
         }
 
 
@@ -37,14 +35,14 @@ class CategoryItem(Base):
     """Individual stuffed animal"""
     __tablename__ = 'category_item'
 
-    name = Column(String(80), nullable=False)
-    id = Column(Integer, primary_key=True)
+    name = Column(String(80), nullable=False, primary_key=True)
     description = Column(String(250))
     picture = Column(String(250))
-    category_id = Column(Integer, ForeignKey('category.id'))
+    category_name = Column(Integer, ForeignKey('category.name'))
     category = relationship(Category)
     user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
+    create_time = Column(DateTime, server_default=func.now())
 
     @property
     def serialize(self):
@@ -52,10 +50,10 @@ class CategoryItem(Base):
         return {
             'name': self.name,
             'description': self.description,
-            'id': self.id,
             'picture': self.picture,
-            'categoryId': self.category_id,
-            'userId': self.user_id
+            'category': self.category_name,
+            'userId': self.user_id,
+            'createTime': self.create_time
         }
 
 

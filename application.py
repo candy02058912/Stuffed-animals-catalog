@@ -16,8 +16,9 @@ from oauth2client.client import FlowExchangeError
 
 # Initialization
 app = Flask(__name__)
+path = os.path.dirname(os.path.abspath(__file__))
 CLIENT_ID = json.loads(
-    open('client_secrets.json', 'r').read())['web']['client_id']
+    open(os.path.join(path, 'client_secrets.json'), 'r').read())['web']['client_id']
 engine = create_engine(
     'sqlite:///stuffedanimals.db', connect_args={'check_same_thread': False}
 )
@@ -33,7 +34,7 @@ categories = session.query(Category).all()
 @app.route('/catalog/')
 def show_catalog():
     """Shows the whole catalog to the public"""
-    animals = session.query(CategoryItem).order_by(CategoryItem.id.desc())
+    animals = session.query(CategoryItem).order_by(CategoryItem.create_time.desc())
     return render_template(
         'catalog.html',
         categories=categories,
@@ -44,7 +45,7 @@ def show_catalog():
 @app.route('/catalog/<string:animal_type>/items/')
 def show_category_items(animal_type):
     """Shows item by category to the public"""
-    category_id = session.query(Category).filter_by(name=animal_type).one().id
+    category_id = session.query(Category).filter_by(name=animal_type).one_or_none().id
     animals = session.query(CategoryItem).filter_by(category_id=category_id)
     return render_template(
         'category_items.html',
@@ -57,9 +58,8 @@ def show_category_items(animal_type):
 @app.route('/catalog/<string:animal_type>/<string:animal_name>/')
 def show_animal(animal_type, animal_name):
     """Show the individual animal"""
-    category = session.query(Category).filter_by(name=animal_type).one()
     animal = session.query(CategoryItem).filter_by(
-        name=animal_name, category_id=category.id).one()
+        name=animal_name, category_id=animal_type).one_or_none()
     creator = get_user_info(animal.user_id)
     if 'username' not in login_session or \
             creator.id != login_session['user_id']:
@@ -71,7 +71,7 @@ def show_animal(animal_type, animal_name):
 @app.route('/catalog/<string:animal_name>/edit/', methods=['GET', 'POST'])
 def edit_animal(animal_name):
     """Edit a particular animal"""
-    animal = session.query(CategoryItem).filter_by(name=animal_name).one()
+    animal = session.query(CategoryItem).filter_by(name=animal_name).one_or_none()
     creator = get_user_info(animal.user_id)
     if 'username' not in login_session or\
             creator.id != login_session['user_id']:
@@ -85,7 +85,7 @@ def edit_animal(animal_name):
             animal.description = request.form['description']
         if request.form['category']:
             animal.category = session.query(Category).filter_by(
-                name=request.form['category']).one()
+                name=request.form['category']).one_or_none()
         session.add(animal)
         session.commit()
         flash("Edited!")
@@ -102,7 +102,7 @@ def edit_animal(animal_name):
 @app.route('/catalog/<string:animal_name>/delete/', methods=['GET', 'POST'])
 def delete_animal(animal_name):
     """Delete a particular animal"""
-    animal = session.query(CategoryItem).filter_by(name=animal_name).one()
+    animal = session.query(CategoryItem).filter_by(name=animal_name).one_or_none()
     creator = get_user_info(animal.user_id)
     if 'username' not in login_session or\
             creator.id != login_session['user_id']:
@@ -134,7 +134,7 @@ def add_animal():
             description=request.form['description'],
             user_id=login_session['user_id'],
             category=session.query(Category).filter_by(
-                name=request.form['category']).one()
+                name=request.form['category']).one_or_none()
         )
         session.add(animal)
         session.commit()
@@ -167,7 +167,7 @@ def gconnect():
 
     try:
         # Upgrade the authorization code into a credentials object.
-        oauth_flow = flow_from_clientsecrets('client_secrets.json', scope='')
+        oauth_flow = flow_from_clientsecrets(os.path.join(path, 'client_secrets.json'), scope='')
         oauth_flow.redirect_uri = 'postmessage'
         credentials = oauth_flow.step2_exchange(code)
     except FlowExchangeError:
@@ -275,7 +275,7 @@ def catalog_api():
 @app.route('/api/catalog/<string:animal_type>/')
 def catalog_by_category_api(animal_type):
     """Returns the animals by category in JSON format"""
-    category = session.query(Category).filter_by(name=animal_type).one()
+    category = session.query(Category).filter_by(name=animal_type).one_or_none()
     animals = session.query(CategoryItem).filter_by(category=category)
     return jsonify(animals=[animal.serialize for animal in animals])
 
@@ -283,9 +283,8 @@ def catalog_by_category_api(animal_type):
 @app.route('/api/catalog/<string:animal_type>/<string:animal_name>')
 def animal_api(animal_type, animal_name):
     """Returns individual animal in JSON format"""
-    category = session.query(Category).filter_by(name=animal_type).one()
     animal = session.query(CategoryItem).filter_by(
-        name=animal_name, category_id=category.id).one()
+        name=animal_name, category_name=animal_type).one_or_none()
     return jsonify(animal.serialize)
 
 
@@ -299,20 +298,20 @@ def create_user(login_session):
     )
     session.add(new_user)
     session.commit()
-    user = session.query(User).filter_by(email=login_session['email']).one()
+    user = session.query(User).filter_by(email=login_session['email']).one_or_none()
     return user.id
 
 
 def get_user_info(user_id):
     """Returns user by user id"""
-    user = session.query(User).filter_by(id=user_id).one()
+    user = session.query(User).filter_by(id=user_id).one_or_none()
     return user
 
 
 def get_user_id(email):
     """Returns user id by email"""
     try:
-        user = session.query(User).filter_by(email=email).one()
+        user = session.query(User).filter_by(email=email).one_or_none()
         return user.id
     except Exception:
         return None
