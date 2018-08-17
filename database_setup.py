@@ -8,6 +8,7 @@ Base = declarative_base()
 
 
 class User(Base):
+    """User information"""
     __tablename__ = 'user'
 
     name = Column(String(250), nullable=False)
@@ -17,6 +18,7 @@ class User(Base):
 
 
 class Category(Base):
+    """Stuffed animal category"""
     __tablename__ = 'category'
 
     id = Column(Integer, primary_key=True)
@@ -32,6 +34,7 @@ class Category(Base):
 
 
 class CategoryItem(Base):
+    """Individual stuffed animal"""
     __tablename__ = 'category_item'
 
     name = Column(String(80), nullable=False)
@@ -51,6 +54,8 @@ class CategoryItem(Base):
             'description': self.description,
             'id': self.id,
             'picture': self.picture,
+            'categoryId': self.category_id,
+            'userId': self.user_id
         }
 
 
