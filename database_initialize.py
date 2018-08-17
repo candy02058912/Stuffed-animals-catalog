@@ -1,4 +1,5 @@
 #!/usr/bin/python python2.7
+import json
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -17,55 +18,21 @@ User1 = User(name="Ian Lin", email="ian_lin@example.com",
 session.add(User1)
 session.commit()
 
-# Bear Stuffed Animals
-category1 = Category(name="Bear")
-
-session.add(category1)
-session.commit()
-
-animal1 = CategoryItem(
-    user_id=1,
-    name="Winnie the Pooh",
-    description="A bear with a very little brain.",
-    picture="https://i.imgur.com/8y1Ugtn.jpg",
-    category=category1
-)
-
-session.add(animal1)
-session.commit()
-
-# Pig Stuffed Animals
-category2 = Category(name="Pig")
-
-session.add(category2)
-session.commit()
-
-animal1 = CategoryItem(
-    user_id=1,
-    name="Piglet",
-    description="Winnie the Pooh's best friend.",
-    picture="https://i.imgur.com/QPz4qOm.jpg",
-    category=category2
-)
-
-session.add(animal1)
-session.commit()
-
-# Pig Stuffed Animals
-category3 = Category(name="Mouse")
-
-session.add(category3)
-session.commit()
-
-animal1 = CategoryItem(
-    user_id=1,
-    name="Pikachu",
-    description="A friendly electric mouse from Pokemon.",
-    picture="https://i.imgur.com/acdAGy4.jpg",
-    category=category3
-)
-
-session.add(animal1)
-session.commit()
+# Create initial data
+data = json.loads(open('data.json', 'r').read())
+for category in data:
+    new_category = Category(name=category)
+    session.add(new_category)
+    session.commit()
+    for item in data[category]:
+        new_item = CategoryItem(
+            user_id=item['user_id'],
+            name=item['name'],
+            description=item['description'],
+            picture=item['picture'],
+            category=new_category
+        )
+        session.add(new_item)
+        session.commit()
 
 print "added initial stuffed animals"

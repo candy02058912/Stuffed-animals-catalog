@@ -1,0 +1,26 @@
+{
+    "Bear": [
+        {
+            "user_id":1,
+            "name": "Winnie the Pooh",
+            "description": "A bear with a very little brain.",
+            "picture": "https://i.imgur.com/8y1Ugtn.jpg"
+        }
+    ],
+    "Pig": [
+        {
+            "user_id":1,
+            "name": "Piglet",
+            "description": "Winnie the Pooh's best friend.",
+            "picture": "https://i.imgur.com/QPz4qOm.jpg"
+        }
+    ],
+    "Mouse": [
+        {
+            "user_id": 1,
+            "name": "Pikachu",
+            "description": "A friendly electric mouse from Pokemon.",
+            "picture": "https://i.imgur.com/acdAGy4.jpg"
+        }
+    ]
+}
